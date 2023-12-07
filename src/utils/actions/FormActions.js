@@ -2,7 +2,7 @@ import React from 'react'
 import { ValidationEmail, ValidationPhone, ValidationString } from '../ValidationConstraints'
 
 export default function FormActions(inputId,inputValue) {
-    if(inputId==="fullname"|| inputId==="username"|| inputId==="password"||
+    if(inputId==="firstname"|| inputId==="username"|| inputId==="password"||
         inputId==="department" || inputId==="faculty"|| inputId==="gender"|| 
         inputId==="matricNo"|| inputId==="dob"
         || inputId==="title"|| inputId==="date" || inputId==="startTime"){

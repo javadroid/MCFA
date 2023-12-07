@@ -12,6 +12,7 @@ import CustomButton from '../components/CustomButton'
 import { formReducer } from '../utils/reducers/FormReducers';
 import FormActions from '../utils/actions/FormActions';
 import CustomKeyboardAvoidingView from '../components/CustomKeyboardAvoidingView';
+import { useNavigation } from '@react-navigation/native'
 
 const initialState = {
     inputValue: {
@@ -24,8 +25,9 @@ const initialState = {
     },
     formValid: false
 }
-export default function Login() {
+export default function Login({nativation}) {
     const dispatch = useDispatch()
+    const navigate=useNavigation()
     const [formState, dispatchFormState] = useReducer(formReducer, initialState)
     const [errorMatric, setErrorMatric] = useState(null);
     const [errorPassword, setErrorPassword] = useState(null);
@@ -39,8 +41,13 @@ export default function Login() {
         const result = (FormActions(inputId, inputValue))
         dispatchFormState({ inputId, validationResult: result, inputValue })
     }, [dispatchFormState])
+
+    const HandleClick=()=>{
+
+        navigate.navigate("Register")
+    }
     return (
-        <CustomKeyboardAvoidingView>
+        // <CustomKeyboardAvoidingView>
         <CustomPageCointainer edgeTop={"top"} style={styles.container}>
             
             <View style={styles.applogcontainer} >
@@ -73,7 +80,7 @@ export default function Login() {
 
             </View>
             <View style={{ borderRadius: 12, width: "100%", marginTop:20, }}>
-                <CustomButton text={"Sign In"} style={{ borderRadius: 12,padding:10 }} />
+                <CustomButton onPress={HandleClick} lable={"Sign In"} style={{ borderRadius: 12,padding:10 }} />
             </View>
             <View style={{ flexDirection: "row", width: "100%", alignItems: "center", justifyContent: "center",marginTop:20 }}>
                 <CustomText text='New to MCFA?' numberOfLines={undefined} style={{ ...typescale.bodyMedium, paddingHorizontal: 0, alignSelf: "flex-start" }} />
@@ -94,7 +101,7 @@ export default function Login() {
             </View>
            
         </CustomPageCointainer> 
-        </CustomKeyboardAvoidingView>
+        // </CustomKeyboardAvoidingView>
     )
 }
 

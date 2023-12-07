@@ -8,8 +8,8 @@ import { palette } from '../constants/Colors';
 
 
 
-export default function CustomButton({ style  ,
-  text=""}) {
+export default function CustomButton({ style  ,onPress,
+  lable=""}) {
   const styles = StyleSheet.create({
     
     container: {
@@ -22,7 +22,7 @@ export default function CustomButton({ style  ,
     },
   });
   return (
-   <Button  buttonStyle={{...styles.container,...style}} title={text}/>
+   <Button onPress={onPress}  buttonStyle={{...styles.container,...style}} title={lable}/>
   )
 
 

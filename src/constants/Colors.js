@@ -1,9 +1,18 @@
 const palette= {
   main_background_color:"#F7F7F7",
+
   text_pupple_color1:"#B72DC3",
+  text_black_color1:"#4D4D4D",
+
   button_pupple_color1:"#B72DC3",
+  buttonicon_pupple_color1:"#C34FCD",
+
   boarder_color1:"#908D8D",
+  boarder_color2:"#423F3F",
+
   divider_color1:"#E6E6E6",
+  divider_color2:"#D8D5D8",
+
   icon_color1:"#8D8D8D",
     primary100: 'rgba(255, 255, 255, 1)',
     primary99: 'rgba(255, 251, 254, 1)',
