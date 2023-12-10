@@ -3,12 +3,23 @@ const palette= {
 
   text_pupple_color1:"#B72DC3",
   text_black_color1:"#4D4D4D",
+  text_white_color2:"#737373",
+  text_faded_color1:"#6D6D6D",
 
   button_pupple_color1:"#B72DC3",
   buttonicon_pupple_color1:"#C34FCD",
 
+  card_pupple_color1:"#CE70D6",
+  card_pupplelight_color1:"#E5B3E9",
+  card_blue_color1:"#7087D6",
+  card_red_color1:"#FF5555",
+  card_orange_color1:"#FFFF7A",
+
+  hiddenblue:"#D9D9D9",
+
   boarder_color1:"#908D8D",
   boarder_color2:"#423F3F",
+  boarder_color3:"#5F5F5F",
 
   divider_color1:"#E6E6E6",
   divider_color2:"#D8D5D8",

@@ -4,9 +4,9 @@ import { KeyboardAvoidingView, Platform } from 'react-native'
 export default function CustomKeyboardAvoidingView({ children  }) {
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? 'padding' : undefined}
       keyboardVerticalOffset={100}
-      style={{ flex: 1 }}>
+      style={{ flex: 1,display:"flex", }}>
       {children}
 
 

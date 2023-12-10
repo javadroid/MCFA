@@ -57,7 +57,7 @@ export default function MainNavigation() {
 
             <SafeAreaProvider style={{ flex: 1 }} onLayout={onLayOut}>
                 <NavigationContainer linking={linking}>
-                    <Stack.Navigator initialRouteName={'Login'}>
+                    <Stack.Navigator initialRouteName={'TabNavigation'}>
                         <Stack.Group screenOptions={{ headerTransparent: true, headerShadowVisible: false }}>
                             <Stack.Screen
                                 name='Register'
@@ -73,8 +73,8 @@ export default function MainNavigation() {
                             />
 
                             <Stack.Screen options={{
-                                headerTitle: '',
-                                headerTitleAlign: 'center',
+                               headerShown: false,
+                               
                                 headerTransparent: true
                             }} name='TabNavigation' component={TabNavigation}
                             />
