@@ -18,11 +18,11 @@ export default function Created({navigate}) {
                 <CustomText style={{ ...typescale.bodyLarge,marginBottom:30 }} text='You have successfully created a saving group' />
                 
                 {/* </View> */}
-               <View style={{ borderRadius: 12, width: "70%",bottom:40 ,position:"absolute" }}>
+               
+            </View>
+            <View style={{ borderRadius: 12, width: "90%",marginBottom:20,alignSelf:"center" }}>
                     <CustomButton onPress={() => {navigate.goBack() }} lable={"Done"} style={{ borderRadius: 12, padding: 10 }} />
                 </View>
-            </View>
-
 
         </CustomPageCointainer>
     )

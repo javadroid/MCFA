@@ -30,9 +30,16 @@ const Stack = createNativeStackNavigator()
 // const Drawer = createDrawerNavigator()
 const SavingTab=()=>{
   return(
-    <Stack.Navigator initialRouteName={'MyGroups'}>
+    <Stack.Navigator initialRouteName={'Saving'}>
     <Stack.Group screenOptions={{ headerTransparent: true, headerShadowVisible:false }}>
         <Stack.Screen
+            name='Saving'
+            component={Saving}
+            options={{
+              headerShown:false,
+              headerTitle:""
+            }} />
+            <Stack.Screen
             name='MyGroups'
             component={MyGroups}
             options={{

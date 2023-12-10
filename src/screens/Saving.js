@@ -7,9 +7,11 @@ import CustomText from '../components/CustomText'
 import Svg, { Path, G, Defs, ClipPath, Rect } from 'react-native-svg';
 import { Avatar, Badge, Icon, withBadge } from '@rneui/themed';
 import { dotListIcon, groupImageBgr, groupImageBgr1 } from '../../assets/icons/IconIndex'
+import { TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 export default function Saving() {
-
+  const navigate = useNavigation()
   return (
     <CustomPageCointainer style={styles.container}>
 
@@ -41,21 +43,21 @@ export default function Saving() {
         </View>
         <CardContainer bg={groupImageBgr1} title={'Join ROSCA Group'}
           list={["Automated contributions, fair payouts", "Secure transactions, community support", "Save daily, weekly or monthly to meet your target", "Open Membership for All"]} />
-        <CardContainer bg={groupImageBgr} 
-        title={'Join ASCA Group'}
+        <CardContainer navigate={navigate} bg={groupImageBgr}
+          title={'Join ASCA Group'}
           list={["Automated contributions, fair payouts.", "Secure transactions, community support", "Make loans, earn interest, secure repayments", "Contribute and lend"]} />
-        
+
       </View>
-      
+
 
     </CustomPageCointainer>
   )
 }
 
-const CardContainer = ({ list, title, bg }) => {
+const CardContainer = ({ list, title, bg,navigate }) => {
   return (
-    <ImageBackground imageStyle={{}} style={{ justifyContent: "flex-end", flex: 1, marginVertical: 10 }} source={bg}>
-      <View style={{justifyContent:"space-between", flexDirection: "row", padding: 10,backgroundColor:palette.buttonicon_pupple_color1, }}>
+    <ImageBackground imageStyle={{borderRadius:8}} style={{ justifyContent: "flex-end", flex: 1, marginVertical: 10,borderRadius:8 }} source={bg}>
+      <TouchableOpacity onPress={()=>navigate.navigate("MyGroups")} style={{borderBottomStartRadius:8,borderBottomEndRadius:8, justifyContent: "space-between", flexDirection: "row", padding: 10, backgroundColor: palette.buttonicon_pupple_color1, }}>
         <View>
           <CustomText text={title} numberOfLines={undefined} style={{ color: palette.main_background_color, ...typescale.titleMedium, fontSize: 20, fontWeight: 700, paddingRight: 0, paddingLeft: 0 }} />
           {
@@ -70,8 +72,8 @@ const CardContainer = ({ list, title, bg }) => {
           }
 
         </View>
-<Icon color={palette.main_background_color} type='feathet'name='chevron-right'/>
-      </View>
+        <Icon color={palette.main_background_color} type='feathet' name='chevron-right' />
+      </TouchableOpacity>
     </ImageBackground>
   )
 }
