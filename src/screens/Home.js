@@ -64,9 +64,10 @@ export default function Home() {
             <View style={{alignItems: 'center',}}>
                 <View style={styles.cardMain}>
 
-                <CustomText text='Hi Jessica' numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 600, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
+                <CustomText text='Hi Jessica' numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
 
-                <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, }}><Avatar
+                <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, }}>
+                    <Avatar
                     rounded
                     source={{
                         uri: 'https://randomuser.me/api/portraits/women/40.jpg',
@@ -80,7 +81,7 @@ export default function Home() {
                         <CustomText text='Your quick path to seamless savings and 
                             smart borrowing. Contribute, track, and 
                             manage effortlessly. For a financially 
-                            stress-free life, choose StashFund.'
+                            stress-free life, choose MCFA.'
                             numberOfLines={undefined} style={{ ...typescale.bodySmall, flexShrink: 1, fontSize: 13, fontWeight: 600, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
 
                     </View>

@@ -23,6 +23,7 @@ import CreateROSCAGroup from '../screens/savings/CreateROSCAGroup';
 import CreateASCAGroup from '../screens/savings/CreateASCAGroup';
 import Created from '../screens/savings/Created';
 import SavingsDashboard from '../screens/savings/SavingsDashboard';
+import RequestLoan from '../screens/loans/RequestLoan';
 
 
 const Tab = createBottomTabNavigator()
@@ -72,19 +73,14 @@ const SavingTab=()=>{
             headerTransparent: true
         }} name='Savings' component={Saving}
         />
+          <Stack.Screen options={{
+            headerShown:false,
+            headerTitleAlign: 'center',
+            headerTransparent: true
+        }} name='LoanTab' component={LoanTab}
+        />
 
-        <Stack.Screen options={{
-           headerShown: false,
-           
-            headerTransparent: true
-        }} name='TabNavigation' component={TabNavigation}
-        /> 
-         {/* <Stack.Screen options={{
-           headerShown: false,
-           headerLeft:()=><></>,
-            headerTransparent: true
-        }} name='Created' component={Created}
-        />  */}
+       
     </Stack.Group>
 
 
@@ -92,6 +88,41 @@ const SavingTab=()=>{
 </Stack.Navigator>
   )
 }
+const LoanTab=()=>{
+  return(
+    <Stack.Navigator initialRouteName={'RequestLoan'}>
+    <Stack.Group screenOptions={{ headerTransparent: true, headerShadowVisible:false }}>
+        <Stack.Screen
+            name='RequestLoan'
+            component={RequestLoan}
+            options={{
+            
+              headerTitle:"Loan Request"
+            }} />
+            <Stack.Screen
+            name='MyGroups'
+            component={MyGroups}
+            options={{
+              headerTitle:""
+            }} />
+           
+        <Stack.Screen options={{
+            headerShown:false,
+            headerTitleAlign: 'center',
+            headerTransparent: true
+        }} name='Savings' component={Saving}
+        />
+
+      
+         
+    </Stack.Group>
+
+
+
+</Stack.Navigator>
+  )
+}
+
 export default function TabNavigation() {
   return (
     <Tab.Navigator

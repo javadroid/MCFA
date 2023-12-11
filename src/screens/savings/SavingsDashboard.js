@@ -135,7 +135,7 @@ export default function SavingsDashboard() {
         </>
       </>
 
-      <FAB style={{position:"absolute",right:1,bottom:1,margin:30}}  color="green" size="small" title="Request a loan" />
+      <FAB onPress={()=>navigate.navigate("LoanTab")} style={{position:"absolute",right:1,bottom:1,margin:30}}  color="green" size="small" title="Request a loan" />
 
     </CustomPageCointainer>
   )
