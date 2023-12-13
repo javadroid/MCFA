@@ -27,7 +27,7 @@ export default function MainNavigation() {
       
     }, [])
 const checkUser=async()=>{
-    console.log("MainNavigation checking auth",userData?.Users?._id)
+    console.log("MainNavigation checking auth",userData?._id)
     setuserData(await getData("userData"))
 }
 

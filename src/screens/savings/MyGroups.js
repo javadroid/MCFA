@@ -31,7 +31,7 @@ const updateSearch = (search) => {
 const getdata=async()=>{
   const ss=await getData("userData")
   setuserData(ss)
-  axios.get(apiUrl + "user-group/"+ss.Users._id).then((e) => {
+  axios.get(apiUrl + "user-group/"+ss._id).then((e) => {
     console.log(e.data)
     setgroupData(e.data)
   }).catch((err) => {

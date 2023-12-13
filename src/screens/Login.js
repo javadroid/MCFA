@@ -47,7 +47,7 @@ export default function Login({ nativation }) {
         console.log("clicked")
         axios.post(apiUrl + "login", formState.inputValue).then(async (e) => {
             console.log(e.data)
-                  await saveData("userData",e.data)
+                  await saveData("userData",e.data.Users)
             navigate.navigate("TabNavigation")
         }).catch((err) => {
             Alert.alert(err.data.msg||"something wrong")

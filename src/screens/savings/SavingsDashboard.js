@@ -121,7 +121,7 @@ export default function SavingsDashboard({ route }) {
   }
   const Contribute = async () => {
     console.log("Contribute")
-    axios.post(apiUrl + "pay ", { userid: userData?.Users._id, groupid: route.params._id }).then(async (e) => {
+    axios.post(apiUrl + "pay ", { userid: userData._id, groupid: route.params._id }).then(async (e) => {
       console.log(e.data)
       getaa()
       LoadProfile()
@@ -197,7 +197,7 @@ export default function SavingsDashboard({ route }) {
                 <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Days until Next Contribution : ' + calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil + " days"} />
                 <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Next Contribution : ' + calculateTimeUntilDayOfWeek(route.params.payDay).targetDate} />
                 {
-                  route.params.members.includes(userData?.Users._id) ? (
+                  route.params.members.includes(userData._id) ? (
                     <>
                       {calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil !== 0 && <Button onPress={Contribute} title={"Contribute"} />}
                     </>
@@ -286,7 +286,7 @@ const ParticipantList = ({ index, item }) => {
       </Svg>
 
       <CustomText style={{ ...typescale.titleMedium, fontWeight: 600, flexGrow: 1, paddingLeft: 0 }} text={userName} />
-      <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, }} text={userData?.Users.firstname + " " + userData?.Users?.lastname === userName && '(You)'} />
+      <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, }} text={userData.firstname + " " + userData?.lastname === userName && '(You)'} />
 
     </View>
   )

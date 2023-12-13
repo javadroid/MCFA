@@ -54,15 +54,16 @@ export default function Home() {
     const [url, setUrl] = useState("");
 
     useEffect(() => {
-        checkUser()
+        
         LoadProfile()
+        checkUser()
 
     }, [])
     const checkUser = async () => {
         const ss = await getData("userData")
         setuserData(ss)
 
-        axios.get(apiUrl + "trx/" + ss?.Users?._id).then(async (e) => {
+        axios.get(apiUrl + "trx/" + ss?._id).then(async (e) => {
             setTrx(e.data)
         }).catch((err) => {
             console.log(err.message || JSON.stringify(err, null, 2))
@@ -73,7 +74,7 @@ export default function Home() {
 
     const Proceed = () => {
         console.log("clicked")
-        axios.post(apiUrl + "payment", { amount, email: userData.Users.email, userid: userData.Users._id }).then(async (e) => {
+        axios.post(apiUrl + "payment", { amount, email: userData.email, userid: userData._id }).then(async (e) => {
             console.log(e.data)
             setUrl(e.data.authorization_url)
             setChecked(2)
@@ -113,7 +114,7 @@ export default function Home() {
     const Withdraw = () => {
         toggleDialog3()
         
-        axios.post(apiUrl + "withdraw/", { amount, userid: userData?.Users?._id }).then(async (e) => {
+        axios.post(apiUrl + "withdraw/", { amount, userid: userData?._id }).then(async (e) => {
             checkUser()
             LoadProfile()
         }).catch((err) => {
@@ -153,7 +154,7 @@ export default function Home() {
             <View style={{ alignItems: 'center', }}>
                 <View style={styles.cardMain}>
 
-                    <CustomText text={"Hi " + userData?.Users?.firstname} numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
+                    <CustomText text={"Hi " + userData?.firstname} numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
 
                     <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, }}>
                         <Avatar
@@ -312,13 +313,13 @@ const CardBalance = ({ visible, index, key, item, userData, setvisible }) => {
         if (visible) {
             switch (index) {
                 case 0:
-                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    bal = userData?.balance + ".00" || "00.00"
                     break;
                 case 1:
-                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    bal = userData?.balance + ".00" || "00.00"
                     break;
                 case 2:
-                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    bal = userData?.balance + ".00" || "00.00"
                     break;
                 default:
                     break;

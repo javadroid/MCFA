@@ -106,7 +106,7 @@ setuserData(await getData("userData"))
     setVisible(!visible);
   };
 const createGroup=()=>{
-  axios.post(apiUrl + "group", {...formState.inputValue,status:"Active",type:route.params.name,members:[userData.Users._id]}).then((e) => {
+  axios.post(apiUrl + "group", {...formState.inputValue,status:"Active",type:route.params.name,members:[userData._id]}).then((e) => {
     console.log(e.data)
     navigate.goBack()
 }).catch((err) => {
