@@ -7,11 +7,14 @@ import CustomText from '../../components/CustomText'
 import Svg, { Path, G, Defs, ClipPath, Rect } from 'react-native-svg';
 import { StyleSheet } from 'react-native'
 import { typescale } from '../../constants/Typography'
-import { Tab, Icon, TabView ,FAB } from '@rneui/themed';
+import { Tab, Icon, TabView, FAB } from '@rneui/themed';
 import { FlatList } from 'react-native'
-import { Divider } from '@rneui/themed';
+import { Divider,Button } from '@rneui/themed';
+import { apiUrl, getData, getUser } from '../../utils/service/Api'
+import axios  from 'axios'
+import { Alert } from 'react-native'
 
-export default function SavingsDashboard() {
+export default function SavingsDashboard({ route }) {
   const navigate = useNavigation()
   useLayoutEffect(() => {
     navigate.setOptions({
@@ -26,6 +29,8 @@ export default function SavingsDashboard() {
   const [index, setIndex] = React.useState(0);
 
   useEffect(() => {
+
+    // console.log(route)
     if (notify < notilist.length) {
       showNextAnnoucement()
     } else {
@@ -57,6 +62,64 @@ export default function SavingsDashboard() {
 
     })
   }
+  const [trx, setTrx] = useState([])
+  const [userData, setuserData] = useState()
+  
+
+  
+  useEffect(() => {
+    getaa()
+  }, [])
+
+  const getaa=async()=>{
+    setuserData(await getData("userData"))
+    axios.get(apiUrl + "trx/" + route.params._id).then(async (e) => {
+
+      setTrx(e.data)
+  }).catch((err) => {
+      console.log(err.message || JSON.stringify(err, null, 2))
+      Alert.alert(err.data?.msg || err.message || "something wrong")
+  })
+  }
+
+  const  calculateTimeUntilDayOfWeek=(targetDay)=> {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    // Get the current date and time
+    const currentDate = new Date();
+    
+    // Find the index of the target day in the daysOfWeek array
+    const targetDayIndex = daysOfWeek.indexOf(targetDay);
+    
+    if (targetDayIndex === -1) {
+      // Invalid day of the week
+      return 'Invalid day of the week';
+    }
+    
+    // Get the current day of the week
+    const currentDayIndex = currentDate.getDay();
+    
+    // Calculate the difference in days between the current day and the target day
+    let daysUntilTargetDay = targetDayIndex - currentDayIndex;
+    
+    // If the target day is before the current day, add 7 to get the correct positive difference
+    if (daysUntilTargetDay <= 0) {
+      daysUntilTargetDay += 7;
+    }
+    
+    // Calculate the time until the target day in milliseconds
+    const timeUntilTargetDay = daysUntilTargetDay * 24 * 60 * 60 * 1000;
+    
+    // Calculate the target date by adding the time until the target day to the current date
+    const targetDate = new Date(currentDate.getTime() + timeUntilTargetDay);
+    
+    // Return the result
+    return {
+      daysUntil: daysUntilTargetDay,
+      targetDate: targetDate.toLocaleString(),
+    };
+  }
+  
   return (
     <CustomPageCointainer edgeTop={'top'} style={styles.container}>
 
@@ -112,21 +175,40 @@ export default function SavingsDashboard() {
         <>
           <TabView value={index} onChange={setIndex} animationType="spring">
             <TabView.Item style={{ width: '100%' }}>
-              <Text >Recent</Text>
+            <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
+              {/* <View style={{flexDirection:"row",justifyContent:"space-between" }}> */}
+              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group ID: '+route.params._id} />
+              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group Name: '+route.params.name} />
+              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Amount to Contribute: ₦'+route.params.amount} />
+              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Intervals : '+route.params.inverval} />
+              <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Days until Next Contribution : '+calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil+" days"} />
+              <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Next Contribution : '+calculateTimeUntilDayOfWeek(route.params.payDay).targetDate} />
+              {
+                route.params.members.includes(userData?.Users._id)?(
+                  <>
+                  {calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil!==0&&<Button title={"Contribute"}/>}
+                  </>
+                ):(<>
+                <Button title={"Join Group"}/>
+                </>)
+              }
+              {/* </View> */}
+            
+                </View>
             </TabView.Item>
             <TabView.Item style={{ width: '100%', }}>
               <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
                 <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Transactions'} />
-                <FlatList data={[1, 2, 3, 8, 9,]}
+                <FlatList data={trx}
                   showsVerticalScrollIndicator={false}
-                  renderItem={(probs) => <TransacList {...probs} navigate={navigate} />} />
+                  renderItem={(probs) => <TransacList  {...probs} navigate={navigate} />} />
               </View>
             </TabView.Item>
             <TabView.Item style={{ width: '100%' }}>
-              
+
               <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
-                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'5 participants'} />
-                <FlatList data={[1, 2, 3, 8, 9,]}
+                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={route.params.members.length + ' participants'} />
+                <FlatList data={route.params.members}
                   showsVerticalScrollIndicator={false}
                   renderItem={(probs) => <ParticipantList {...probs} navigate={navigate} />} />
               </View>
@@ -134,29 +216,33 @@ export default function SavingsDashboard() {
           </TabView>
         </>
       </>
+{
+  route.params.type!=="ROSCA"&&(
+    <FAB onPress={() => navigate.navigate("LoanTab")} style={{ position: "absolute", right: 1, bottom: 1, margin: 30 }} color="green" size="small" title="Request a loan" />
 
-      <FAB onPress={()=>navigate.navigate("LoanTab")} style={{position:"absolute",right:1,bottom:1,margin:30}}  color="green" size="small" title="Request a loan" />
-
+  )
+}
+      
     </CustomPageCointainer>
   )
 }
-const TransacList = ({ index }) => {
+const TransacList = ({ index,item }) => {
   return (
     <View style={{ marginBottom: 10, marginLeft: 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={'Invest'} />
+        <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={item.details} />
 
         <View style={{ flexDirection: "row", alignItems: "center", }}>
           <Icon size={15} color='green' type='feather' name={'plus'} />
           <Svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none">
             <Path d="M0 3.66667H1.5V0H3L5.565 3.66667H9V0H10.5V3.66667H12V4.88889H10.5V6.11111H12V7.33333H10.5V11H9L6.4275 7.33333H3V11H1.5V7.33333H0V6.11111H1.5V4.88889H0V3.66667ZM3 3.66667H3.8475L3 2.46278V3.66667ZM3 4.88889V6.11111H5.565L4.71 4.88889H3ZM9 8.55556V7.33333H8.1375L9 8.55556ZM6.42 4.88889L7.2825 6.11111H9V4.88889H6.42Z" fill="black" />
           </Svg>
-          <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={'11,000.00'} />
+          <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={item.amount} />
         </View>
       </View>
 
 
-      <CustomText style={{ ...typescale.labelSmall, fontWeight: 600, padding: 0 }} text={'12 Nov 2023 06:44:00'} />
+      <CustomText style={{ ...typescale.labelSmall, fontWeight: 600, padding: 0 }} text={new Date(item.createdAt).toDateString()} />
       <Divider style={{ marginTop: 5 }} />
     </View>
 
@@ -166,15 +252,28 @@ const TransacList = ({ index }) => {
 
 }
 
-const ParticipantList = ({ index }) => {
+const ParticipantList = ({ index, item }) => {
+  const [userName, setuserName] = useState("")
+  const [userData, setuserData] = useState()
+  const get = async () => {
+    setuserData(await getData("userData"))
+    const ss = await getUser(item)
+    console.log({ ss })
+    setuserName(ss)
+  }
+
+  useEffect(() => {
+    get()
+  }, [])
+
   return (
     <View style={{ flexDirection: "row", alignItems: "center", marginLeft: 10, }}>
       <Svg width="15" height="20" viewBox="0 0 22 21" fill="none">
         <Path d="M11 15.75C14.0376 15.75 16.5 13.3995 16.5 10.5C16.5 7.6005 14.0376 5.25 11 5.25C7.96243 5.25 5.5 7.6005 5.5 10.5C5.5 13.3995 7.96243 15.75 11 15.75Z" fill="#DA92E0" />
       </Svg>
 
-      <CustomText style={{ ...typescale.titleMedium, fontWeight: 600, flexGrow: 1, paddingLeft: 0 }} text={'Jessica Martinz'} />
-      <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, }} text={index === 0 && '(You)'} />
+      <CustomText style={{ ...typescale.titleMedium, fontWeight: 600, flexGrow: 1, paddingLeft: 0 }} text={userName} />
+      <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, }} text={userData?.Users.firstname + " " + userData?.Users?.lastname === userName && '(You)'} />
 
     </View>
   )

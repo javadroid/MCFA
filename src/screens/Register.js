@@ -11,6 +11,9 @@ import FormActions from '../utils/actions/FormActions'
 import CustomButton from '../components/CustomButton'
 import CustomText from '../components/CustomText'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
+import { apiUrl } from '../utils/service/Api'
+import { Alert } from 'react-native'
 const initialState = {
   inputValue: {
     firstname: "",
@@ -18,12 +21,12 @@ const initialState = {
     email: "",
     dob: "",
     gender: "",
-    address: "",
-    maritalStatus: "",
-    salary: "",
-    profession: "",
-    jobStatus: "",
-    Education: "",
+    // address: "",
+    // maritalStatus: "",
+    // salary: "",
+    // profession: "",
+    // jobStatus: "",
+    // Education: "",
     phone: "",
     password: "",
 
@@ -36,12 +39,12 @@ const initialState = {
     email: false,
     dob: false,
     gender: false,
-    address: false,
-    maritalStatus: false,
-    salary: false,
-    profession: false,
-    jobStatus: false,
-    education: false,
+    // address: false,
+    // maritalStatus: false,
+    // salary: false,
+    // profession: false,
+    // jobStatus: false,
+    // education: false,
   },
   formValid: false
 }
@@ -62,21 +65,31 @@ export default function Register({}) {
     dispatchFormState({ inputId, validationResult: result, inputValue })
   }, [dispatchFormState])
   const onPress = () => {
-    navigate.navigate("TabNavigation")
+   
+    console.log("clicked")
+    axios.post(apiUrl + "signup", {...formState.inputValue,balance:"0"}).then((e) => {
+        console.log(e.data)
+       
+        navigate.navigate("Login")
+    }).catch((err) => {
+      console.log(err)
+        Alert.alert("dfsdfd")
+    })
   }
 
   return (
     <CustomKeyboardAvoidingView>
       <CustomPageCointainer edgeTop={"top"} style={styles.container}>
-      <CustomText text='Personal Information' numberOfLines={undefined} style={{marginTop:60, color: palette.text_pupple_color1, ...typescale.titleMedium, padding: 0, alignSelf: "flex-start" }} />
+      <CustomText text='Personal Information' numberOfLines={undefined} style={{marginTop:30, color: palette.text_pupple_color1, ...typescale.titleMedium, padding: 0, alignSelf: "flex-start" }} />
       <CustomText text='Please fill in the following information' numberOfLines={undefined} style={{ color: palette.text_black_color1, ...typescale.bodyMedium, paddingLeft: 0, alignSelf: "flex-start",marginBottom:20 }} />
-<Progress/>
+{/* <Progress/> */}
         <CustomTextInput containerstyle={{marginVertical: 15,}}  lable='First Name' error={formState.inputValidities['firstname']} style={styles.inputbox1} id={"firstname"} value={formState.inputValue['firstname']} onChangeText={onChangeTextHandler} keyboardType={undefined} />
         <CustomTextInput containerstyle={{marginVertical: 15,}} lable='Last Name' error={formState.inputValidities['lastname']} style={styles.inputbox1} id={"lastname"} value={formState.inputValue['lastname']} onChangeText={onChangeTextHandler} keyboardType={undefined} />
         <CustomTextInput containerstyle={{marginVertical: 15,}} lable='Email ID' error={formState.inputValidities['email']} style={styles.inputbox1} id={"email"} value={formState.inputValue['email']} onChangeText={onChangeTextHandler} keyboardType={"email-address"} />
         <CustomTextInput containerstyle={{marginVertical: 15,}} lable='Mobile Number' error={formState.inputValidities['phone']} style={styles.inputbox1} id={"phone"} value={formState.inputValue['phone']} onChangeText={onChangeTextHandler} keyboardType={"phone-pad"} />
         <CustomTextInput containerstyle={{marginVertical: 15,}} lable='Date of Birth' error={formState.inputValidities['dob']} style={styles.inputbox1} id={"dob"} value={formState.inputValue['dob']} onChangeText={onChangeTextHandler} keyboardType={undefined} />
         <CustomTextInput containerstyle={{marginVertical: 15,}} lable='Gender' error={formState.inputValidities['gender']} style={styles.inputbox1} id={"gender"} value={formState.inputValue['gender']} onChangeText={onChangeTextHandler} keyboardType={undefined} />
+        <CustomTextInput visible={true} containerstyle={{marginVertical: 15,}} lable='Password' error={formState.inputValidities['password']} style={styles.inputbox1} id={"password"} value={formState.inputValue['password']} onChangeText={onChangeTextHandler} keyboardType={"number-pad"} />
         
         <View style={{ borderRadius: 12, width: "100%", marginTop: 20, }}>
           <CustomButton onPress={onPress} lable={"Register"} style={{ borderRadius: 12, padding: 10 }} />
@@ -127,7 +140,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: 'center',
     alignSelf: "baseline",
-    marginTop: 50,
+    marginTop: 20,
   },
   inputcontainer: {
     display: "flex",

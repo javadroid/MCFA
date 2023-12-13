@@ -24,7 +24,7 @@ export default function LoanSuccess({navigate}) {
                 }}>
                 Kindly allow 3-4hrs to reflect in your balance</CustomText>
 
-            <ImageBackground style={{ marginHorizontal: 20, flex: 1 ,padding:20,justifyContent:"center",}} source={cardVector}>
+            <ImageBackground resizeMode='stretch' style={{ marginHorizontal: 20, flex: 1 ,padding:20,justifyContent:"center",}} source={cardVector}>
 
                 <CustomText text={null}
                     style={{

@@ -10,15 +10,26 @@ import Login from '../screens/Login';
 import Register from '../screens/Register';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import TabNavigation from './TabNavigation';
+import { getData } from '../utils/service/Api';
 
 const prefix = Linking.createURL('/');
 SplashScreen.preventAutoHideAsync()
 export default function MainNavigation() {
     const [isFontLoaded, setFontLoaded] = useState(false);
+    const [userData, setuserData] = useState();
     useEffect(() => {
+       
         loadFonts()
     }, [])
 
+    useEffect(() => {
+        checkUser()
+      
+    }, [])
+const checkUser=async()=>{
+    console.log("MainNavigation checking auth",userData?.Users?._id)
+    setuserData(await getData("userData"))
+}
 
     async function loadFonts() {
 
@@ -57,18 +68,17 @@ export default function MainNavigation() {
 
             <SafeAreaProvider style={{ flex: 1 }} onLayout={onLayOut}>
                 <NavigationContainer linking={linking}>
-                    <Stack.Navigator initialRouteName={'TabNavigation'}>
+                    <Stack.Navigator initialRouteName={userData?'TabNavigation':"Login"}>
                         <Stack.Group screenOptions={{ headerTransparent: true, headerShadowVisible: false }}>
                             <Stack.Screen
                                 name='Register'
                                 component={Register}
                                 options={{
-
+                                    headerShown:false,
                                 }} />
                             <Stack.Screen options={{
                                 headerTitle: '',
-                                headerTitleAlign: 'center',
-                                headerTransparent: true
+                                headerShown:false,
                             }} name='Login' component={Login}
                             />
 

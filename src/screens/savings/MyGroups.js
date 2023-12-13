@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import GroupList from './GroupList'
 import CustomPageCointainer from '../../components/CustomPageContainer'
 import { palette } from '../../constants/Colors'
@@ -9,22 +9,48 @@ import Svg, { Path, G, Defs, ClipPath, Rect } from 'react-native-svg';
 import { Button } from '@rneui/themed';
 import { SearchBar } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native'
-export default function MyGroups() {
+import { apiUrl, getData } from '../../utils/service/Api'
+import axios  from 'axios'
+export default function MyGroups({route}) {
+  const [userData, setuserData] = useState();
+  const [groupData, setgroupData] = useState();
+  useEffect(() => {
+   console.log(route.params.name)
+   
+   getdata()
+   
+  }, [])
+
+
+  
   const [search, setSearch] = useState("");
   const navigate = useNavigation()
 const updateSearch = (search) => {
   setSearch(search);
 };
+const getdata=async()=>{
+  const ss=await getData("userData")
+  setuserData(ss)
+  axios.get(apiUrl + "user-group/"+ss.Users._id).then((e) => {
+    console.log(e.data)
+    setgroupData(e.data)
+  }).catch((err) => {
+  console.log(err)
+    Alert.alert("dfsdfd")
+  })
+
+}
+
   return (
     <CustomPageCointainer edgeTop={'top'} style={styles.container}>
       <View style={styles.applogcontainer} >
 
-        <CustomText text='My Groups' numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 20, fontWeight: 700, paddingRight: 0, paddingLeft: 0 }} />
+        <CustomText text={`My ${route.params.name} Groups`} numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 20, fontWeight: 700, paddingRight: 0, paddingLeft: 0 }} />
 
 
         <View style={{ flexDirection: "row" }}>
           <Button buttonStyle={{ borderRadius: 6, marginRight: 10 }} titleStyle={{ ...typescale.labelMedium }} style={{}} title="Join(+)" />
-          <Button color="success" buttonStyle={{ borderRadius: 6 }} style={{}} titleStyle={{ ...typescale.labelMedium }} onPress={()=> navigate.navigate("CreateROSCAGroup")} title="Create" />
+          <Button color="success" buttonStyle={{ borderRadius: 6 }} style={{}} titleStyle={{ ...typescale.labelMedium }} onPress={()=> navigate.navigate("CreateROSCAGroup",{name:route.params.name})} title="Create" />
         </View>
       </View>
       <View style={{}}>
@@ -37,7 +63,7 @@ const updateSearch = (search) => {
           value={search}
         />
       </View>
-      <GroupList navigate={navigate} />
+      <GroupList type={route.params.name} data={groupData} navigate={navigate} />
     </CustomPageCointainer>
   )
 }

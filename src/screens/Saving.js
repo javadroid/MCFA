@@ -41,9 +41,9 @@ export default function Saving() {
             />
           </View>
         </View>
-        <CardContainer bg={groupImageBgr1} title={'Join ROSCA Group'}
+        <CardContainer navigate={navigate} name={"ROSCA"} bg={groupImageBgr1} title={'Join ROSCA Group'}
           list={["Automated contributions, fair payouts", "Secure transactions, community support", "Save daily, weekly or monthly to meet your target", "Open Membership for All"]} />
-        <CardContainer navigate={navigate} bg={groupImageBgr}
+        <CardContainer navigate={navigate} name={"ASCA"}bg={groupImageBgr}
           title={'Join ASCA Group'}
           list={["Automated contributions, fair payouts.", "Secure transactions, community support", "Make loans, earn interest, secure repayments", "Contribute and lend"]} />
 
@@ -54,10 +54,10 @@ export default function Saving() {
   )
 }
 
-const CardContainer = ({ list, title, bg,navigate }) => {
+const CardContainer = ({ list, title, bg,navigate ,name}) => {
   return (
     <ImageBackground imageStyle={{borderRadius:8}} style={{ justifyContent: "flex-end", flex: 1, marginVertical: 10,borderRadius:8 }} source={bg}>
-      <TouchableOpacity onPress={()=>navigate.navigate("MyGroups")} style={{borderBottomStartRadius:8,borderBottomEndRadius:8, justifyContent: "space-between", flexDirection: "row", padding: 10, backgroundColor: palette.buttonicon_pupple_color1, }}>
+      <TouchableOpacity onPress={()=>navigate.navigate("MyGroups",{name})} style={{borderBottomStartRadius:8,borderBottomEndRadius:8, justifyContent: "space-between", flexDirection: "row", padding: 10, backgroundColor: palette.buttonicon_pupple_color1, }}>
         <View>
           <CustomText text={title} numberOfLines={undefined} style={{ color: palette.main_background_color, ...typescale.titleMedium, fontSize: 20, fontWeight: 700, paddingRight: 0, paddingLeft: 0 }} />
           {

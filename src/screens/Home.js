@@ -1,18 +1,42 @@
-import { View, Text, FlatList, TouchableOpacity, Platform } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, Platform, Alert } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomPageCointainer from '../components/CustomPageContainer'
 import { StyleSheet } from 'react-native'
 import CustomText from '../components/CustomText'
 import { Image } from 'react-native'
 import { typescale } from '../constants/Typography'
+import { WebView } from 'react-native-webview';
 import { palette } from '../constants/Colors'
 import { Avatar, Badge, Icon, withBadge } from '@rneui/themed';
 import Svg, { Path, G, Defs, ClipPath, Rect } from 'react-native-svg';
 import { useWindowDimensions } from 'react-native'
 import TransactionList, { TransactionView } from '../components/TransactionList'
+import { Button, Dialog, Input } from '@rneui/base'
+import { Modal } from 'react-native'
+import { LoadProfile, apiUrl, getData } from '../utils/service/Api'
+import axios from 'axios'
 export default function Home() {
     const width = useWindowDimensions().width
     const [position, setposition] = useState(1);
+    const [visible, setVisible] = useState(true);
+    const [visible2, setVisible2] = useState(false);
+    const [visible3, setVisible3] = useState(false);
+    const [checked, setChecked] = useState(1);
+    const [amount, setAmount] = useState("");
+    const [trx, setTrx] = useState([]);
+    const [trxid, settrxid] = useState("");
+
+    const toggleDialog2 = () => {
+        setChecked(1)
+        setAmount("")
+        setVisible2(!visible2);
+    };
+
+    const toggleDialog3 = () => {
+        setChecked(1)
+        setAmount("")
+        setVisible3(!visible3);
+    };
     // Access the FlatList by creating a ref
     const flatListRef = useRef(null);
     const scrollToIndex = (index) => {
@@ -24,18 +48,65 @@ export default function Home() {
 
         if (index <= 2) {
             setposition(index + 1);
-       
         }
-
-        // 
     };
+    const [userData, setuserData] = useState();
+    const [url, setUrl] = useState("");
 
+    useEffect(() => {
+        checkUser()
 
+    }, [])
+    const checkUser = async () => {
+        const ss = await getData("userData")
+        setuserData(ss)
 
+        axios.get(apiUrl + "trx/" + ss?.Users?._id).then(async (e) => {
+            setTrx(e.data)
+        }).catch((err) => {
+            console.log(err.message || JSON.stringify(err, null, 2))
+            Alert.alert(err.data?.msg || err.message || "something wrong")
+        })
+
+    }
+
+    const Proceed = () => {
+        console.log("clicked")
+        axios.post(apiUrl + "payment", { amount, email: userData.Users.email, userid: userData.Users._id }).then(async (e) => {
+            console.log(e.data.authorization_url)
+            setUrl(e.data.authorization_url)
+            setChecked(2)
+            settrxid(e.data.reference)
+        }).catch((err) => {
+            console.log(err.data)
+            Alert.alert(err.data?.msg || "something wrong")
+        })
+    }
+
+    const VerifyTrx = (t) => {
+        console.log("VerifyTrxdd", t || trxid, userData.Users._id)
+
+        axios.get(apiUrl + "verifypayment?ref=" + t || trxid).then(async (e) => {
+            Alert.alert("Success")
+            LoadProfile()
+        }).catch((err) => {
+            console.log(err.data?.msg || err.message || JSON.stringify(err, null, 2))
+            Alert.alert(err.data?.msg || err.message || "something wrong")
+        })
+    }
+
+    const Withdraw = () => {
+        axios.post(apiUrl + "withdraw/", { amount, userid: userData?.Users?._id }).then(async (e) => {
+            LoadProfile()
+        }).catch((err) => {
+            console.log(err.message || JSON.stringify(err, null, 2))
+            Alert.alert(err.data?.msg || err.message || "something wrong")
+        })
+    }
 
     return (
         <CustomPageCointainer edgeTop={'top'} style={styles.container} >
-            
+
             <View style={styles.applogcontainer} >
                 <View style={{ flexDirection: "row" }}>
                     <CustomText text='MC' numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 20, fontWeight: 700, paddingRight: 0, paddingLeft: 0 }} />
@@ -61,43 +132,43 @@ export default function Home() {
                     />
                 </View>
             </View>
-            <View style={{alignItems: 'center',}}>
+            <View style={{ alignItems: 'center', }}>
                 <View style={styles.cardMain}>
 
-                <CustomText text='Hi Jessica' numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
+                    <CustomText text={"Hi " + userData?.Users?.firstname} numberOfLines={undefined} style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
 
-                <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, }}>
-                    <Avatar
-                    rounded
-                    source={{
-                        uri: 'https://randomuser.me/api/portraits/women/40.jpg',
-                    }}
-                    size="medium"
-                />
-                    <View style={{ flexDirection: "column", marginLeft: 6, }}>
-                        <CustomText text='Welcome to MCFA' numberOfLines={undefined} style={{ ...typescale.bodySmall, fontSize: 13, fontWeight: 600, padding: 0, color: palette.main_background_color }} />
+                    <View style={{ flexDirection: "row", alignItems: "center", flexShrink: 1, }}>
+                        <Avatar
+                            rounded
+                            source={{
+                                uri: 'https://randomuser.me/api/portraits/women/40.jpg',
+                            }}
+                            size="medium"
+                        />
+                        <View style={{ flexDirection: "column", marginLeft: 6, }}>
+                            <CustomText text='Welcome to MCFA' numberOfLines={undefined} style={{ ...typescale.bodySmall, fontSize: 13, fontWeight: 600, padding: 0, color: palette.main_background_color }} />
 
 
-                        <CustomText text='Your quick path to seamless savings and 
+                            <CustomText text='Your quick path to seamless savings and 
                             smart borrowing. Contribute, track, and 
                             manage effortlessly. For a financially 
                             stress-free life, choose MCFA.'
-                            numberOfLines={undefined} style={{ ...typescale.bodySmall, flexShrink: 1, fontSize: 13, fontWeight: 600, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
+                                numberOfLines={undefined} style={{ ...typescale.bodySmall, flexShrink: 1, fontSize: 13, fontWeight: 600, paddingRight: 0, paddingLeft: 0, color: palette.main_background_color }} />
+
+                        </View>
+
 
                     </View>
 
 
                 </View>
-
-
             </View>
-                </View>
-            
+
 
             <Progress position={position} />
             <View style={{ flexDirection: "row", marginRight: -34, marginLeft: -10 }}>
                 <FlatList ref={flatListRef} showsHorizontalScrollIndicator={false} horizontal data={[1, 2, 3]}
-                    renderItem={(probs) => <CardBalance visible={true} {...probs} />}
+                    renderItem={(probs) => <CardBalance setvisible={setVisible} userData={userData} visible={visible} {...probs} />}
                     keyExtractor={(item, index) => index.toString()}
 
                     onScroll={onScroll}
@@ -107,23 +178,90 @@ export default function Home() {
                 />
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                <ButtonCircle text='Add Fund' />
-                <ButtonCircle name='minus' text='Withdraw Fund' />
-                <ButtonCircle name='minimize-2' text='Transfer Fund' />
+                <ButtonCircle onPress={toggleDialog2} text='Add Fund' />
+                <ButtonCircle onPress={toggleDialog3} name='minus' text='Withdraw Fund' />
+                <ButtonCircle name='minimize-2' text='' />
             </View>
-            <View style={{alignSelf:"flex-start", flexDirection: "row", justifyContent:"space-between", width: "110%" ,marginLeft:-15  }}>
+            <View style={{ alignSelf: "flex-start", flexDirection: "row", justifyContent: "space-between", width: "110%", marginLeft: -15 }}>
                 <BoxContain balance={"770.00"} text="Loan" />
                 <BoxContain balance={"770.00"} text="Contribution" />
                 <BoxContain />
             </View>
-            <View style={{justifyContent:"space-between",alignItems:"center",flexDirection:"row", width:"100%",marginTop:10}}>
-                <CustomText style={{...typescale.bodyMedium,color:palette.text_black_color1,fontWeight:600}} text='Recent transactions'/>
-                <CustomText style={{...typescale.bodyMedium,color:palette.text_pupple_color1,fontWeight:600}} text='View all'/>
+            <View style={{ justifyContent: "space-between", alignItems: "center", flexDirection: "row", width: "100%", marginTop: 10 }}>
+                <CustomText style={{ ...typescale.bodyMedium, color: palette.text_black_color1, fontWeight: 600 }} text='Recent transactions' />
+                <CustomText style={{ ...typescale.bodyMedium, color: palette.text_pupple_color1, fontWeight: 600 }} text='View all' />
             </View>
             {/* <View style={{width:"100%",backgroundColor:"red",zIndex:-100}}> */}
-            <TransactionList />
+            <TransactionList VerifyTrx={VerifyTrx} data={trx.reverse()} />
             {/* </View> */}
-            
+
+
+
+            <Modal style={{ alignItems: "center", justifyContent: "center" }} animationType='slide' transparent={true} visible={visible2} onDismiss={toggleDialog2}>
+                <View style={{ flex: 1, marginVertical: checked === 2 ? 0 : 180, marginHorizontal: checked === 2 ? 0 : 30, backgroundColor: checked === 2 ? "white" : "black", alignItems: checked === 2 ? null : "center", justifyContent: checked === 2 ? null : "center" }}>
+
+                    {
+                        checked === 1 && (
+                            <>
+                                <Input value={amount} style={{ margin: 10 }} placeholder='Enter amount to deposite'
+                                    inputStyle={{ color: "white" }}
+                                    keyboardType='number-pad' onChangeText={(e) => setAmount(e)} />
+                                <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-around", padding: 10 }}>
+
+                                    <Button color={'error'} onPress={() => toggleDialog2()} title={"Cancel"} />
+                                    <Button onPress={Proceed} color={'success'} title={"Proceed"} />
+                                </View>
+                            </>
+                        )
+                    }
+                    {
+                        checked === 2 && (
+
+                            <>
+                                <WebView
+                                    containerStyle={{ flex: 1, backgroundColor: "white" }}
+                                    source={{ uri: url }}
+                                    style={{ flex: 1, backgroundColor: "white" }}
+                                    allowsBackForwardNavigationGestures={true}
+                                    javaScriptEnabled={true}
+                                    javaScriptCanOpenWindowsAutomatically={true}
+                                />
+                                <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", padding: 30 }}>
+
+                                    <Button color={'error'} onPress={() => toggleDialog2()} title={"Cancel"} />
+                                    <Button color={'success'} onPress={VerifyTrx} title={"Verifiy payment"} />
+                                </View>
+                            </>
+
+                        )
+                    }
+
+
+                </View>
+
+
+            </Modal>
+
+            <Modal style={{ alignItems: "center", justifyContent: "center" }} animationType='slide' transparent={true} visible={visible3} onDismiss={toggleDialog3}>
+                <View style={{ flex: 1, marginVertical: 180, marginHorizontal: 30, backgroundColor: "black", alignItems: "center", justifyContent: "center" }}>
+
+
+                    <Input value={amount} style={{ margin: 10 }} placeholder='Enter amount to withdraw'
+                        inputStyle={{ color: "white" }}
+                        keyboardType='number-pad' onChangeText={(e) => setAmount(e)} />
+                    <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-around", padding: 10 }}>
+
+                        <Button color={'error'} onPress={() => toggleDialog3()} title={"Cancel"} />
+                        <Button onPress={Withdraw} color={'success'} title={"Proceed"} />
+                    </View>
+
+
+
+
+                </View>
+
+
+            </Modal>
 
         </CustomPageCointainer>
     )
@@ -149,9 +287,29 @@ const Progress = ({ position = 1 }) => {
     )
 }
 
-const CardBalance = ({ visible, index, key, item }) => {
+const CardBalance = ({ visible, index, key, item, userData, setvisible }) => {
     const width = useWindowDimensions().width
-   
+    const getBalance1 = () => {
+        let bal = ""
+        if (visible) {
+            switch (index) {
+                case 0:
+                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    break;
+                case 1:
+                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    break;
+                case 2:
+                    bal = userData?.Users?.balance + ".00" || "00.00"
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            bal = "**.**"
+        }
+        return bal
+    }
     return (
 
         <View style={{ borderRadius: 8, elevation: 5, backgroundColor: "white", marginVertical: 20, paddingRight: 0, marginRight: 10, width: width * 0.9 }}>
@@ -162,12 +320,12 @@ const CardBalance = ({ visible, index, key, item }) => {
                         <Svg width="22" height="19" viewBox="0 0 22 19" fill="none">
                             <Path d="M3.66675 7.125H5.50008V2.375H7.33342L10.4684 7.125H14.6667V2.375H16.5001V7.125H18.3334V8.70833H16.5001V10.2917H18.3334V11.875H16.5001V16.625H14.6667L11.5226 11.875H7.33342V16.625H5.50008V11.875H3.66675V10.2917H5.50008V8.70833H3.66675V7.125ZM7.33342 7.125H8.36925L7.33342 5.56542V7.125ZM7.33342 8.70833V10.2917H10.4684L9.42342 8.70833H7.33342ZM14.6667 13.4583V11.875H13.6126L14.6667 13.4583ZM11.5134 8.70833L12.5676 10.2917H14.6667V8.70833H11.5134Z" fill="black" />
                         </Svg>
-                        <CustomText style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, padding: 0 }} text={visible ? '770.00' : '***.**'} />
+                        <CustomText style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 700, padding: 0 }} text={getBalance1()} />
                     </View>
                     <CustomText style={{ ...typescale.titleMedium, fontSize: 18, fontWeight: 600, padding: 0, color: palette.text_white_color2, }}
                         text={index === 0 ? 'Account balance' : index === 1 ? 'Total savings balance' : 'Total outstanding loan'} />
                 </View>
-                <Icon onPress={() => { }} type='feather' name={visible ? 'eye' : 'eye-off'} />
+                <Icon onPress={() => { setvisible(!visible) }} type='feather' name={visible ? 'eye' : 'eye-off'} />
             </View>
 
             <View style={{ borderBottomEndRadius: 8, borderBottomStartRadius: 8, height: 16, backgroundColor: index === 0 ? palette.card_blue_color1 : index === 1 ? palette.card_red_color1 : palette.card_orange_color1 }}>
@@ -238,7 +396,7 @@ const BoxContain = ({ type = 'feather', name = 'plus', onPress, visible = true, 
             </View>
 
             <View style={{ borderBottomEndRadius: 8, borderBottomStartRadius: 8, height: 30, justifyContent: "center", alignItems: "center", backgroundColor: "#E3E3E3" }}>
-                <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, padding: 0 }} text={text&&"Apply now"} />
+                <CustomText style={{ ...typescale.bodySmall, fontWeight: 600, padding: 0 }} text={text && "Apply now"} />
             </View>
         </TouchableOpacity>
     )
@@ -274,7 +432,7 @@ const styles = StyleSheet.create({
         display: "flex",
 
         backgroundColor: palette.main_background_color,
-        
+
         paddingHorizontal: 34,
     },
     applogcontainer: {
