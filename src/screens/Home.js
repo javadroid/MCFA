@@ -55,6 +55,7 @@ export default function Home() {
 
     useEffect(() => {
         checkUser()
+        LoadProfile()
 
     }, [])
     const checkUser = async () => {
@@ -73,7 +74,7 @@ export default function Home() {
     const Proceed = () => {
         console.log("clicked")
         axios.post(apiUrl + "payment", { amount, email: userData.Users.email, userid: userData.Users._id }).then(async (e) => {
-            console.log(e.data.authorization_url)
+            console.log(e.data)
             setUrl(e.data.authorization_url)
             setChecked(2)
             settrxid(e.data.reference)
@@ -83,11 +84,25 @@ export default function Home() {
         })
     }
 
-    const VerifyTrx = (t) => {
-        console.log("VerifyTrxdd", t || trxid, userData.Users._id)
+    const VerifyTrx = () => {
+        console.log("VerifyTrxdd", trxid)
 
-        axios.get(apiUrl + "verifypayment?ref=" + t || trxid).then(async (e) => {
+        axios.get(apiUrl + "verifypayment?ref=" +  trxid).then(async (e) => {
             Alert.alert("Success")
+            toggleDialog2()
+            LoadProfile()
+        }).catch((err) => {
+            console.log(err.data?.msg || err.message || JSON.stringify(err, null, 2))
+            Alert.alert(err.data?.msg || err.message || "something wrong")
+        })
+    }
+    const VerifyTrx1 = (t) => {
+        console.log("VerifyTrxdd", t)
+
+        axios.get(apiUrl + "verifypayment?ref=" + t).then(async (e) => {
+            checkUser()
+            Alert.alert("Success")
+
             LoadProfile()
         }).catch((err) => {
             console.log(err.data?.msg || err.message || JSON.stringify(err, null, 2))
@@ -96,7 +111,10 @@ export default function Home() {
     }
 
     const Withdraw = () => {
+        toggleDialog3()
+        
         axios.post(apiUrl + "withdraw/", { amount, userid: userData?.Users?._id }).then(async (e) => {
+            checkUser()
             LoadProfile()
         }).catch((err) => {
             console.log(err.message || JSON.stringify(err, null, 2))
@@ -182,17 +200,17 @@ export default function Home() {
                 <ButtonCircle onPress={toggleDialog3} name='minus' text='Withdraw Fund' />
                 <ButtonCircle name='minimize-2' text='' />
             </View>
-            <View style={{ alignSelf: "flex-start", flexDirection: "row", justifyContent: "space-between", width: "110%", marginLeft: -15 }}>
+            {/* <View style={{ alignSelf: "flex-start", flexDirection: "row", justifyContent: "space-between", width: "110%", marginLeft: -15 }}>
                 <BoxContain balance={"770.00"} text="Loan" />
                 <BoxContain balance={"770.00"} text="Contribution" />
                 <BoxContain />
-            </View>
+            </View> */}
             <View style={{ justifyContent: "space-between", alignItems: "center", flexDirection: "row", width: "100%", marginTop: 10 }}>
                 <CustomText style={{ ...typescale.bodyMedium, color: palette.text_black_color1, fontWeight: 600 }} text='Recent transactions' />
                 <CustomText style={{ ...typescale.bodyMedium, color: palette.text_pupple_color1, fontWeight: 600 }} text='View all' />
             </View>
             {/* <View style={{width:"100%",backgroundColor:"red",zIndex:-100}}> */}
-            <TransactionList VerifyTrx={VerifyTrx} data={trx.reverse()} />
+            <TransactionList VerifyTrx={VerifyTrx1} data={trx.reverse()} />
             {/* </View> */}
 
 

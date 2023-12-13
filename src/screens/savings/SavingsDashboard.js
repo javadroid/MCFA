@@ -9,9 +9,9 @@ import { StyleSheet } from 'react-native'
 import { typescale } from '../../constants/Typography'
 import { Tab, Icon, TabView, FAB } from '@rneui/themed';
 import { FlatList } from 'react-native'
-import { Divider,Button } from '@rneui/themed';
-import { apiUrl, getData, getUser } from '../../utils/service/Api'
-import axios  from 'axios'
+import { Divider, Button } from '@rneui/themed';
+import { LoadProfile, apiUrl, getData, getUser } from '../../utils/service/Api'
+import axios from 'axios'
 import { Alert } from 'react-native'
 
 export default function SavingsDashboard({ route }) {
@@ -64,62 +64,75 @@ export default function SavingsDashboard({ route }) {
   }
   const [trx, setTrx] = useState([])
   const [userData, setuserData] = useState()
-  
 
-  
+
+
   useEffect(() => {
     getaa()
   }, [])
 
-  const getaa=async()=>{
+  const getaa = async () => {
     setuserData(await getData("userData"))
     axios.get(apiUrl + "trx/" + route.params._id).then(async (e) => {
 
       setTrx(e.data)
-  }).catch((err) => {
+    }).catch((err) => {
       console.log(err.message || JSON.stringify(err, null, 2))
       Alert.alert(err.data?.msg || err.message || "something wrong")
-  })
+    })
   }
 
-  const  calculateTimeUntilDayOfWeek=(targetDay)=> {
+  const calculateTimeUntilDayOfWeek = (targetDay) => {
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
+
     // Get the current date and time
     const currentDate = new Date();
-    
+
     // Find the index of the target day in the daysOfWeek array
     const targetDayIndex = daysOfWeek.indexOf(targetDay);
-    
+
     if (targetDayIndex === -1) {
       // Invalid day of the week
       return 'Invalid day of the week';
     }
-    
+
     // Get the current day of the week
     const currentDayIndex = currentDate.getDay();
-    
+
     // Calculate the difference in days between the current day and the target day
     let daysUntilTargetDay = targetDayIndex - currentDayIndex;
-    
+
     // If the target day is before the current day, add 7 to get the correct positive difference
     if (daysUntilTargetDay <= 0) {
       daysUntilTargetDay += 7;
     }
-    
+
     // Calculate the time until the target day in milliseconds
     const timeUntilTargetDay = daysUntilTargetDay * 24 * 60 * 60 * 1000;
-    
+
     // Calculate the target date by adding the time until the target day to the current date
     const targetDate = new Date(currentDate.getTime() + timeUntilTargetDay);
-    
+
     // Return the result
     return {
       daysUntil: daysUntilTargetDay,
       targetDate: targetDate.toLocaleString(),
     };
   }
-  
+  const Contribute = async () => {
+    console.log("Contribute")
+    axios.post(apiUrl + "pay ", { userid: userData?.Users._id, groupid: route.params._id }).then(async (e) => {
+      console.log(e.data)
+      getaa()
+      LoadProfile()
+      // setTrx(e)
+    }).catch((err) => {
+      console.log(err.message || JSON.stringify(err, null, 2))
+      Alert.alert(err.data?.msg || err.message || "something wrong")
+    })
+  }
+
+
   return (
     <CustomPageCointainer edgeTop={'top'} style={styles.container}>
 
@@ -175,26 +188,26 @@ export default function SavingsDashboard({ route }) {
         <>
           <TabView value={index} onChange={setIndex} animationType="spring">
             <TabView.Item style={{ width: '100%' }}>
-            <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
-              {/* <View style={{flexDirection:"row",justifyContent:"space-between" }}> */}
-              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group ID: '+route.params._id} />
-              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group Name: '+route.params.name} />
-              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Amount to Contribute: ₦'+route.params.amount} />
-              <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Intervals : '+route.params.inverval} />
-              <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Days until Next Contribution : '+calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil+" days"} />
-              <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Next Contribution : '+calculateTimeUntilDayOfWeek(route.params.payDay).targetDate} />
-              {
-                route.params.members.includes(userData?.Users._id)?(
-                  <>
-                  {calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil!==0&&<Button title={"Contribute"}/>}
-                  </>
-                ):(<>
-                <Button title={"Join Group"}/>
-                </>)
-              }
-              {/* </View> */}
-            
-                </View>
+              <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
+                {/* <View style={{flexDirection:"row",justifyContent:"space-between" }}> */}
+                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group ID: ' + route.params._id} />
+                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Group Name: ' + route.params.name} />
+                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Amount to Contribute: ₦' + route.params.amount} />
+                <CustomText style={{ ...typescale.titleMedium, fontWeight: 600 }} text={'Intervals : ' + route.params.inverval} />
+                <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Days until Next Contribution : ' + calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil + " days"} />
+                <CustomText style={{ ...typescale.bodyLarge, fontWeight: 500 }} text={'Next Contribution : ' + calculateTimeUntilDayOfWeek(route.params.payDay).targetDate} />
+                {
+                  route.params.members.includes(userData?.Users._id) ? (
+                    <>
+                      {calculateTimeUntilDayOfWeek(route.params.payDay).daysUntil !== 0 && <Button onPress={Contribute} title={"Contribute"} />}
+                    </>
+                  ) : (<>
+                    <Button title={"Join Group"} />
+                  </>)
+                }
+                {/* </View> */}
+
+              </View>
             </TabView.Item>
             <TabView.Item style={{ width: '100%', }}>
               <View style={{ margin: 20, backgroundColor: 'white', padding: 5 }}>
@@ -216,17 +229,17 @@ export default function SavingsDashboard({ route }) {
           </TabView>
         </>
       </>
-{
-  route.params.type!=="ROSCA"&&(
-    <FAB onPress={() => navigate.navigate("LoanTab")} style={{ position: "absolute", right: 1, bottom: 1, margin: 30 }} color="green" size="small" title="Request a loan" />
+      {
+        route.params.type !== "ROSCA" && (
+          <FAB onPress={() => navigate.navigate("LoanTab")} style={{ position: "absolute", right: 1, bottom: 1, margin: 30 }} color="green" size="small" title="Request a loan" />
 
-  )
-}
-      
+        )
+      }
+
     </CustomPageCointainer>
   )
 }
-const TransacList = ({ index,item }) => {
+const TransacList = ({ index, item }) => {
   return (
     <View style={{ marginBottom: 10, marginLeft: 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -237,7 +250,7 @@ const TransacList = ({ index,item }) => {
           <Svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11" fill="none">
             <Path d="M0 3.66667H1.5V0H3L5.565 3.66667H9V0H10.5V3.66667H12V4.88889H10.5V6.11111H12V7.33333H10.5V11H9L6.4275 7.33333H3V11H1.5V7.33333H0V6.11111H1.5V4.88889H0V3.66667ZM3 3.66667H3.8475L3 2.46278V3.66667ZM3 4.88889V6.11111H5.565L4.71 4.88889H3ZM9 8.55556V7.33333H8.1375L9 8.55556ZM6.42 4.88889L7.2825 6.11111H9V4.88889H6.42Z" fill="black" />
           </Svg>
-          <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={item.amount} />
+          <CustomText style={{ ...typescale.bodyMedium, fontWeight: 600, padding: 0 }} text={item.amount+".00"||"2000.00"} />
         </View>
       </View>
 

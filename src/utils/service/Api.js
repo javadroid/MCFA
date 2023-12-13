@@ -24,10 +24,10 @@ export const getData = async (key) => {
 
  export const LoadProfile = async () => {
   const userData =await getData("userData")
-    console.log("Loading",{...userData,...e.data})
+    console.log("Loading",{...userData})
 
     if(userData){
-       axios.get(apiUrl + "profile/"+userData._id, ).then(async (e) => {
+       axios.get(apiUrl + "profile/"+userData.Users._id, ).then(async (e) => {
         console.log(e.data)
         await saveData("userData",{...userData,...e.data})
     }).catch((err) => {

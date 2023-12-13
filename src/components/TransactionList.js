@@ -30,7 +30,7 @@ export const TransactionView = ({ item,data = {}, index,VerifyTrx }) => {
 
             <View style={{}}>
                 <CustomText style={{ ...typescale.bodyMedium, color: palette.text_black_color1, fontWeight: 600, padding: 0 }} text={item?.type} />
-                <CustomText style={{ ...typescale.labelSmall, color: palette.text_faded_color1, fontWeight: 600, padding: 0 }} text='23 September, 02:22 PM' />
+                <CustomText style={{ ...typescale.labelSmall, color: palette.text_faded_color1, fontWeight: 600, padding: 0 }} text={'23 September, 02:22 PM'} />
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", }}>
 
